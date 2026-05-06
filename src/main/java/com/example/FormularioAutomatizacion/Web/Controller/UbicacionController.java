@@ -6,7 +6,9 @@ import com.example.FormularioAutomatizacion.Dto.EnfermedaDto;
 import com.example.FormularioAutomatizacion.Service.EnfermedadService;
 import com.example.FormularioAutomatizacion.Service.iServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.Authentication;
 
 import java.util.List;
 
@@ -44,5 +46,13 @@ public class UbicacionController {
     @GetMapping("/enfermedades")
     public List<EnfermedaDto> obtenerEnfermedades() {
         return enfermedadService.obtenerEnfermedades();
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<?> me(Authentication authentication) {
+        if (authentication == null) {
+            return ResponseEntity.status(401).body("No autenticado");
+        }
+        return ResponseEntity.ok(authentication.getName());
     }
 }
