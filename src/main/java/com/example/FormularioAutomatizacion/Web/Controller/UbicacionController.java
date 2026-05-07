@@ -6,7 +6,6 @@ import com.example.FormularioAutomatizacion.Dto.EnfermedaDto;
 import com.example.FormularioAutomatizacion.Service.EnfermedadService;
 import com.example.FormularioAutomatizacion.Service.iServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

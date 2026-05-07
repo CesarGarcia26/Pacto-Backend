@@ -47,6 +47,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/ubicacion/user/**").permitAll()
 
                         .requestMatchers(HttpMethod.POST, "/api/ubicacion/guardar").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/ubicacion/guardar-colectiva").permitAll()
 
                         // Resto protegido
                         .requestMatchers("/api/ubicacion/**").authenticated()
