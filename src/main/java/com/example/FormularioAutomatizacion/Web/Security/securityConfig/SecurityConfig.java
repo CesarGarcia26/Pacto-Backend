@@ -34,7 +34,20 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .anyRequest().permitAll() // ⚠️ TEMPORAL
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+
+                        // ✅ Endpoints públicos
+                        .requestMatchers(HttpMethod.POST, "/api/ubicacion/login").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/ubicacion/guardar").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/ubicacion/guardar-colectiva").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/ubicacion/departamentos/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/ubicacion/ciudades/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/ubicacion/departamento/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/ubicacion/enfermedades").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/ubicacion/user/**").permitAll()
+
+                        // ✅ Resto protegido
+                        .anyRequest().authenticated()
                 )
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
