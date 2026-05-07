@@ -27,7 +27,6 @@ public class SecurityConfig {
     @Autowired
     private JwtRequestFilter jwtRequestFilter;
 
-    // 🔐 Configuración de Spring Security
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
@@ -35,44 +34,22 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        // Endpoints públicos
-
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-
-                        .requestMatchers(HttpMethod.POST, "/api/ubicacion/login").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/ubicacion/departamentos/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/ubicacion/ciudades/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/ubicacion/departamento/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/ubicacion/enfermedades").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/ubicacion/user/**").permitAll()
-
-                        .requestMatchers(HttpMethod.POST, "/api/ubicacion/guardar").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/ubicacion/guardar-colectiva").permitAll()
-
-                        // Resto protegido
-                        .requestMatchers("/api/ubicacion/**").authenticated()
-                        .requestMatchers(HttpMethod.GET, "/api/ubicacion/pyc").authenticated()
-                        .requestMatchers(HttpMethod.GET, "/api/ubicacion/susanita").authenticated()
-                        .requestMatchers(HttpMethod.GET, "/api/ubicacion/nuvant").authenticated()
-                        .anyRequest().authenticated()
+                        .anyRequest().permitAll() // ⚠️ TEMPORAL - solo para diagnosticar
                 )
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
                 .logout(AbstractHttpConfigurer::disable);
 
-        // Añadimos filtro JWT
         http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
-    // 🔐 Bean para usar BCryptPasswordEncoder
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    // 🛠️ Método temporal para generar hashes de todas las empresas
     @Bean
     CommandLineRunner generateCompanyHashes(PasswordEncoder passwordEncoder) {
         return args -> {
@@ -86,7 +63,6 @@ public class SecurityConfig {
 
             System.out.println("🔹 Hashes de contraseñas para empresas:");
             for (String company : companies) {
-                // Contraseña = nombre de la empresa sin espacios ni +, minúsculas, + "form"
                 String rawPassword = company.replaceAll("\\s|\\+", "").toLowerCase() + "form";
                 String hash = passwordEncoder.encode(rawPassword);
                 System.out.println("Empresa: " + company);
